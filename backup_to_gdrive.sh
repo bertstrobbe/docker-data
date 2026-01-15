@@ -12,7 +12,7 @@ git add .
 git commit -m "Automatische backup op $(date +'%Y-%m-%d %H:%M')"
 git push origin main
 echo "Start backup van $SOURCE_DIR naar $REMOTE..."
-
+exit
 # 1. Inpakken 
 tar --exclude='*.log' --exclude='*.db-shm' --exclude='*.db-wal' -czf /tmp/$BACKUP_NAME .
 
