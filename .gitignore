@@ -1,0 +1,39 @@
+# Geheimen (Docker & Apps)
+.env
+homeassistant/secrets.yaml
+zigbee2mqtt/secret.yaml
+
+# Databases & Runtime data (Niet nodig voor config-backup)
+*.db
+*.db-shm
+*.db-wal
+
+homeassistant/.cloud/
+homeassistant/secrets.yaml
+homeassistant/home-assistant_v2.db*
+homeassistant/home-assistant.log*
+homeassistant/zigbee2mqtt/
+homeassistant/zigbee.db
+homeassistant/backups/
+homeassistant/deps/
+homeassistant/tts/
+homeassistant/.storage/
+homeassistant/*.log*
+homeassistant/*.lock
+
+mosquitto/data/
+mosquitto/log/
+
+*.passwd
+zigbee2mqtt/data.json
+zigbee2mqtt/state.json
+zigbee2mqtt/log/
+zigbee2mqtt/*.log
+
+# Tijdelijke backups van Z2M
+zigbee2mqtt/*.bk
+zigbee2mqtt/*_backup*.*
+
+# Systeem bestanden
+.DS_Store
+__pycache__/

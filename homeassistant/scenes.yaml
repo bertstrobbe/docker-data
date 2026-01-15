@@ -1,0 +1,634 @@
+- id: '1749500099115'
+  name: Dressing night
+  entities:
+    light.wiz_rgbw_tunable_06090e:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect:
+      color_mode: rgbw
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 5.882
+      - 100
+      rgb_color:
+      - 255
+      - 25
+      - 0
+      xy_color:
+      - 0.696
+      - 0.303
+      rgbw_color:
+      - 255
+      - 25
+      - 0
+      - 0
+      friendly_name: Dressing BL
+      state: 'on'
+    light.wiz_rgbw_tunable_061776:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      rgbw_color:
+      friendly_name: Dressing BR
+      state: 'off'
+    light.wiz_rgbw_tunable_060ac6:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      rgbw_color:
+      friendly_name: Dressing VL
+      state: 'off'
+    light.wiz_rgbw_tunable_060d3e:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      rgbw_color:
+      friendly_name: Dressing VR
+      state: 'off'
+  metadata: {}
+- id: '1749626759769'
+  name: Dressing Day
+  entities:
+    light.wiz_rgbw_tunable_06090e:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect: Warm white
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2700
+      color_temp: 370
+      hs_color:
+      - 28.395
+      - 65.723
+      rgb_color:
+      - 255
+      - 167
+      - 87
+      xy_color:
+      - 0.525
+      - 0.388
+      rgbw_color:
+      friendly_name: Dressing BL
+      state: 'on'
+    light.wiz_rgbw_tunable_061776:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect: Warm white
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2700
+      color_temp: 370
+      hs_color:
+      - 28.395
+      - 65.723
+      rgb_color:
+      - 255
+      - 167
+      - 87
+      xy_color:
+      - 0.525
+      - 0.388
+      rgbw_color:
+      friendly_name: Dressing BR
+      state: 'on'
+    light.wiz_rgbw_tunable_060ac6:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect: Warm white
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2700
+      color_temp: 370
+      hs_color:
+      - 28.395
+      - 65.723
+      rgb_color:
+      - 255
+      - 167
+      - 87
+      xy_color:
+      - 0.525
+      - 0.388
+      rgbw_color:
+      friendly_name: Dressing VL
+      state: 'on'
+    light.wiz_rgbw_tunable_060d3e:
+      min_color_temp_kelvin: 2200
+      max_color_temp_kelvin: 6500
+      min_mireds: 153
+      max_mireds: 454
+      effect_list:
+      - Alarm
+      - Bedtime
+      - Candlelight
+      - Christmas
+      - Cozy
+      - Cool white
+      - Daylight
+      - Diwali
+      - Deep dive
+      - Fall
+      - Fireplace
+      - Forest
+      - Focus
+      - Golden white
+      - Halloween
+      - Jungle
+      - Mojito
+      - Night light
+      - Ocean
+      - Party
+      - Pulse
+      - Pastel colors
+      - Plantgrowth
+      - Romance
+      - Relax
+      - Sunset
+      - Spring
+      - Summer
+      - Steampunk
+      - True colors
+      - TV time
+      - White
+      - Wake-up
+      - Warm white
+      - Rhythm
+      supported_color_modes:
+      - color_temp
+      - rgbw
+      supported_features: 4
+      effect: Warm white
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2700
+      color_temp: 370
+      hs_color:
+      - 28.395
+      - 65.723
+      rgb_color:
+      - 255
+      - 167
+      - 87
+      xy_color:
+      - 0.525
+      - 0.388
+      rgbw_color:
+      friendly_name: Dressing VR
+      state: 'on'
+  metadata: {}
+- id: '1749676667527'
+  name: Woonkamer relax
+  entities:
+    light.hue_go:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - 'off'
+      - candle
+      - fire
+      - prism
+      - sparkle
+      - opal
+      - glisten
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 84
+      color_temp_kelvin: 2710
+      color_temp: 369
+      hs_color:
+      - 28.373
+      - 65.405
+      rgb_color:
+      - 255
+      - 167
+      - 88
+      xy_color:
+      - 0.524
+      - 0.388
+      mode: normal
+      dynamics: none
+      friendly_name: Hue go
+      supported_features: 44
+      state: 'on'
+    light.led_strip_living:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - xy
+      color_mode: color_temp
+      brightness: 178
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      mode: normal
+      dynamics: none
+      friendly_name: Led strip living
+      supported_features: 40
+      state: 'on'
+    light.hue_color_lamp_hoog:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - 'off'
+      - candle
+      - fire
+      - prism
+      - sparkle
+      - opal
+      - glisten
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      mode: normal
+      dynamics: none
+      friendly_name: Hue color lamp hoog
+      supported_features: 44
+      state: 'on'
+    light.hue_color_lamp_laag:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - 'off'
+      - candle
+      - fire
+      - prism
+      - sparkle
+      - opal
+      - glisten
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      mode: normal
+      dynamics: none
+      friendly_name: Hue color lamp laag
+      supported_features: 44
+      state: 'on'
+  metadata: {}

@@ -1,0 +1,369 @@
+- id: '1748885801951'
+  alias: Tenways Pixel 6
+  description: Start Tenways when Garmin Edge 840 connected
+  triggers:
+  - entity_id: sensor.pixel_6_bluetooth_connection
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: '{{ "F7:74:9F:A2:A1:66 (Edge 840)" in trigger.to_state.attributes.connected_paired_devices
+      }}'
+  actions:
+  - device_id: 4079029b164200ccf17e6b82b2e16cd6
+    domain: mobile_app
+    type: notify
+    message: Start Tenways?
+  mode: single
+- id: '1749141145457'
+  alias: Garagepoort open
+  description: ''
+  triggers:
+  - type: opened
+    device_id: 25da12baab87d979f3a4778624dcd7d5
+    entity_id: 70ba227b271b8b0b7e6578cded7caf42
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  conditions: []
+  actions:
+  - device_id: 4079029b164200ccf17e6b82b2e16cd6
+    domain: mobile_app
+    type: notify
+    message: Garagepoort staat nog steeds open!
+    title: Garagepoort
+  mode: single
+- id: '1749206621749'
+  alias: New automation
+  description: ''
+  use_blueprint:
+    path: Blackshome/low-battery-notifications-and-actions.yaml
+    input:
+      weekday_options:
+      - sun
+      time: '10:00:00'
+      include_easy_notify: enable_easy_okay_notify
+      include_persistent_notification: enable_persistent_okay_notification
+      notify_device:
+      - 4079029b164200ccf17e6b82b2e16cd6
+      - 629e0a9c85705024e6b6efa89b974d9a
+      notify_data:
+      - sticky
+      - high_priority
+      exclude_sensors:
+        entity_id: []
+        label_id: autorecharge
+      include_time: time_enabled
+      include_button: disable_button_trigger
+- id: '1749327639578'
+  alias: Woonkamer schakelaar
+  description: ''
+  use_blueprint:
+    path: jtosic/ikea_styrbar_remote-control_multiple_entities.yaml
+    input:
+      switch_remote: bd292763152bc611972731b1559ba825
+      targets:
+      - light.hue_color_lamp_hoog
+      - light.hue_color_lamp_laag
+      - light.led_strip_living
+      - light.hue_go
+      selected_target: input_number.woonkamer_lights
+      arrow_left_hold:
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.woonkamer_relax
+- id: '1749500115445'
+  alias: New automation
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 26a6c3518659276c47e3990b101d7f3f
+    entity_id: c57b18249e480f0e7144ca0cb9174c7b
+    domain: light
+    trigger: device
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_text.dressing_scene
+        state: Day
+      sequence:
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.hue_go_red_blue
+    - conditions:
+      - condition: state
+        entity_id: input_text.dressing_scene
+        state: Night
+      sequence:
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.hue_go_red
+  mode: single
+- id: '1749627095742'
+  alias: Dressing scene swith
+  description: ''
+  use_blueprint:
+    path: amorfinvdev/somrig.yaml
+    input:
+      remote_name: d6fcc7b250da1c1aedb89d6792785e21
+      dots_1_press_action:
+      - action: input_text.set_value
+        metadata: {}
+        data:
+          value: Day
+        target:
+          entity_id: input_text.dressing_scene
+      - if:
+        - condition: device
+          type: is_on
+          device_id: 26a6c3518659276c47e3990b101d7f3f
+          entity_id: c57b18249e480f0e7144ca0cb9174c7b
+          domain: light
+        then:
+        - action: scene.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: scene.hue_go_red_blue
+      dots_2_press_action:
+      - action: input_text.set_value
+        metadata: {}
+        data:
+          value: Night
+        target:
+          entity_id: input_text.dressing_scene
+      - if:
+        - condition: device
+          type: is_on
+          device_id: 26a6c3518659276c47e3990b101d7f3f
+          entity_id: c57b18249e480f0e7144ca0cb9174c7b
+          domain: light
+        then:
+        - action: scene.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: scene.hue_go_red
+- id: '1765137196185'
+  alias: Lichtjes trap aan
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d6fcc7b250da1c1aedb89d6792785e21
+    type: action
+    subtype: 1_short_release
+    trigger: device
+  conditions: []
+  actions:
+  - action: switch.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.vaatwas
+  mode: single
+- id: '1765140085204'
+  alias: Hal lichten uit
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d6fcc7b250da1c1aedb89d6792785e21
+    type: action
+    subtype: 2_long_press
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id:
+      - d5856d8ca1b3eacdeb0c311cf05f0499
+      - cd4452ca355c07ad459cc8df9513e6fb
+      - 7b66e088d1100b3258f8af1a4d10382f
+      - 3f1def89e6d79fe51e596b94665388ee
+      - e3ab117a92ff323adb7c0b83fd6e51de
+      - ea36213c7dd17346c32bfd9284df1036
+  mode: single
+- id: '1765141203211'
+  alias: Hal V toggle
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d6fcc7b250da1c1aedb89d6792785e21
+    type: action
+    subtype: 2_initial_press
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      device_id:
+      - cd4452ca355c07ad459cc8df9513e6fb
+      - d5856d8ca1b3eacdeb0c311cf05f0499
+      - e3ab117a92ff323adb7c0b83fd6e51de
+      - ea36213c7dd17346c32bfd9284df1036
+      - 7b66e088d1100b3258f8af1a4d10382f
+      - 3f1def89e6d79fe51e596b94665388ee
+  mode: single
+- id: '1765577628177'
+  alias: 'Alert: Lage downloadsnelheid Orb'
+  description: Verstuurt een notificatie als de downloadsnelheid onder de 300 Mbps
+    zakt.
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.orb_sv_dockerhost_download
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    below: 300
+  actions:
+  - action: notify.mobile_app_pixel_6
+    data:
+      title: Home Network download speed low
+      message: 'De downloadsnelheid op sv-dockerhost is laag:  {{ states(''sensor.orb_sv_dockerhost_download'')
+        }} Mbps.
+
+        '
+  mode: single
+- id: '1765990174879'
+  alias: Yatan thuis
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.yatan
+    zone: zone.home
+    event: enter
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Yatan aangekomen thuis
+      title: Yatan aangekomen thuis
+  mode: single
+- id: '1765990199516'
+  alias: Yatan niet thuis
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.yatan
+    zone: zone.home
+    event: leave
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Yatan vertrokken van huis
+      title: Yatan niet thuis
+  mode: single
+- id: '1765990231412'
+  alias: Yatan vertrokken uit Molenkouter
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.yatan
+    zone: zone.molenkouter
+    event: leave
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Yatan vertrokken uit Molenkouter
+      title: Yatan vertrokken uit Molenkouter
+  mode: single
+- id: '1765990267926'
+  alias: Yatan toegekomen Molenkouter
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.yatan
+    zone: zone.molenkouter
+    event: enter
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Yatan aangekomen Molenkouter
+      title: Yatan aangekomen Molenkouter
+  mode: single
+- id: '1766136586853'
+  alias: Gesena vertrokken thuis
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.gesena
+    zone: zone.home
+    event: leave
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Gesena vertrokken van huis
+      title: Gesena niet thuis
+  mode: single
+- id: '1766136617086'
+  alias: Gesena aangekomen thuis
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.gesena
+    zone: zone.home
+    event: enter
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Gesena aangekomen thuis
+      title: Gesena aangekomen thuis
+  mode: single
+- id: '1766136666486'
+  alias: Gesena aangekomen Sint-Lucas
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.gesena
+    zone: zone.sint_lucas
+    event: enter
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Gesena aangekomen Sint-Lucas
+      title: Gesena aangekomen Sint-Lucas
+  mode: single
+- id: '1766136691896'
+  alias: Gesena vertrokken Sint-Lucas
+  description: ''
+  triggers:
+  - trigger: zone
+    entity_id: person.gesena
+    zone: zone.sint_lucas
+    event: leave
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    metadata: {}
+    data:
+      message: Gesena vertrokken Sint-Lucas
+      title: Gesena vertrokken Sint-Lucas
+  mode: single

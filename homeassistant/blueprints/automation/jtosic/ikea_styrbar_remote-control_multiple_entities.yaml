@@ -1,0 +1,379 @@
+blueprint:
+  name: IKEA Styrbar - control multiple Light/Switch Entities
+  description: "**Manage multiple Light/Switch Entities with the IKEA Styrbar Switch
+    Remote via Zigbee2MQTT**\n\n_Release Notes_:\n\n**Version 1.0** (2025-01-29):
+    \ \n- Initial release.\n\n**Version 1.1** (2025-03-14):  \n- Removed the \"Target
+    Switching Delay\" option.  \n- Eliminated unnecessary variables.  \n- Fixed the
+    \"Force Brightness\" option.\n"
+  domain: automation
+  input:
+    switch_remote:
+      name: Styrbar switch remote
+      description: Choose IKEA Styrbar switch remote
+      selector:
+        device:
+          integration: mqtt
+          manufacturer: IKEA
+          model: STYRBAR remote control
+          multiple: false
+    targets:
+      name: Light/Switch
+      description: Choose one or more Light/Switch Entities you want to control
+      selector:
+        entity:
+          filter:
+          - domain:
+            - light
+            - switch
+          multiple: true
+    selected_target:
+      name: Selected Light/Switch Input Number Helper
+      description: Choose the Input Number Helper to be exclusively used by the selected
+        Styrbar switch remote to retain the last selected target Entity index
+      selector:
+        entity:
+          multiple: false
+          filter:
+          - domain:
+            - input_number
+    arrow_left_hold:
+      name: Long press - left
+      description: Action to execute when the Left button (left arrow icon) is held
+        down
+      default: []
+      selector:
+        action: {}
+    arrow_left_release:
+      name: Release press - left
+      description: Action to execute when the Left button (left arrow icon) is released
+        after a long press
+      default: []
+      selector:
+        action: {}
+    arrow_right_hold:
+      name: Long press - right
+      description: Action to execute when the Right button (right arrow icon) is held
+        down
+      default: []
+      selector:
+        action: {}
+    arrow_right_release:
+      name: Release press - right
+      description: Action to execute when the Right button (right arrow icon) is released
+        after a long press
+      default: []
+      selector:
+        action: {}
+    force_brightness:
+      name: Set the brightness to the Brightness Level (%) option value for every
+        On command
+      selector:
+        boolean: {}
+      default: false
+    brightness_pct:
+      name: Brightness (%) when the Force Brightness option is enabled
+      selector:
+        number:
+          min: 0.0
+          max: 100.0
+          step: 1.0
+          mode: slider
+      default: 50
+    repeat_delay:
+      name: Delay for brightness decrement/increment (in milliseconds)
+      selector:
+        number:
+          min: 0.0
+          max: 1000.0
+          step: 1.0
+          mode: slider
+      default: 150
+    repeat_count:
+      name: Maximum number of iterations for brightness decrement/increment
+      selector:
+        number:
+          min: 0.0
+          max: 100.0
+          step: 1.0
+          mode: slider
+      default: 20
+    brightness_step_pct:
+      name: Brightness Level step for each iteration (%)
+      selector:
+        number:
+          min: 0.0
+          max: 100.0
+          step: 1.0
+          mode: slider
+      default: 20
+    blink_time:
+      name: Delay after changing the selected Light/Switch State to indicate selected
+        target (in milliseconds)
+      selector:
+        number:
+          min: 0.0
+          max: 1000.0
+          step: 1.0
+          mode: slider
+      default: 100
+  source_url: https://github.com/jtosic/home_assistant/blob/main/automation/ikea_styrbar_remote-control_multiple_entities.yaml
+description: ''
+mode: restart
+trigger:
+- id: 'on'
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: 'on'
+  trigger: device
+- id: 'off'
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: 'off'
+  trigger: device
+- id: brightness_move_up
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: brightness_move_up
+  trigger: device
+- id: brightness_move_down
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: brightness_move_down
+  trigger: device
+- id: brightness_stop
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: brightness_stop
+  trigger: device
+- id: arrow_left_click
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: arrow_left_click
+  trigger: device
+- id: arrow_left_hold
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: arrow_left_hold
+  trigger: device
+- id: arrow_left_release
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: arrow_left_release
+  trigger: device
+- id: arrow_right_click
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: arrow_right_click
+  trigger: device
+- id: arrow_right_hold
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: arrow_right_hold
+  trigger: device
+- id: arrow_right_release
+  device_id: !input switch_remote
+  domain: mqtt
+  type: action
+  subtype: arrow_right_release
+  trigger: device
+action:
+- variables:
+    targets: !input targets
+    selected_target: !input selected_target
+    brightness_step_pct: !input brightness_step_pct
+    target_index: '{% if states(selected_target) | int < 0 %}0{% elif states(selected_target)
+      | int >= expand(targets) | list | count | int %}{{ expand(targets) | list |
+      count | int - 1 }}{% else%}{{ states(selected_target) | int }}{% endif %}'
+    target_entity_id: '{{ expand(targets)[target_index] | attr(''entity_id'') }}'
+    target_entity_domain: '{{ target_entity_id.split(''.'')[0] }}'
+- service: system_log.write
+  data:
+    level: info
+    message: 'Blueprint Script - IKEA Styrbar - control multiple Lights/Switches:
+      command = {{ trigger.id }}, selected_target = {{ states(selected_target) | int
+      }}, target_index = {{ target_index }}, target_entity_id = {{ target_entity_id
+      }}, target_entity_domain = {{ target_entity_domain }}, target_status = {{ states(target_entity_id)
+      }}'
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''on'' }}'
+    - condition: template
+      value_template: '{{ target_entity_domain == ''light'' }}'
+    - condition: template
+      value_template: !input force_brightness
+    sequence:
+    - service: '{{ target_entity_domain }}.turn_on'
+      target:
+        entity_id: '{{ target_entity_id }}'
+      data:
+        brightness_pct: !input brightness_pct
+    alias: on_force
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''on'' }}'
+    sequence:
+    - service: '{{ target_entity_domain }}.turn_on'
+      target:
+        entity_id: '{{ target_entity_id }}'
+    alias: 'on'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''off'' }}'
+    sequence:
+    - service: '{{ target_entity_domain }}.turn_off'
+      target:
+        entity_id: '{{ target_entity_id }}'
+    alias: 'off'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''brightness_move_up'' }}'
+    - condition: template
+      value_template: '{{ target_entity_domain == ''light'' }}'
+    sequence:
+    - repeat:
+        count: !input repeat_count
+        sequence:
+        - service: light.turn_on
+          metadata: {}
+          data:
+            brightness_step_pct: '{{ brightness_step_pct }}'
+          target:
+            entity_id: '{{ target_entity_id }}'
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 0
+            milliseconds: !input repeat_delay
+    alias: brightness_move_up
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''brightness_move_down'' }}'
+    - condition: template
+      value_template: '{{ target_entity_domain == ''light'' }}'
+    sequence:
+    - repeat:
+        count: !input repeat_count
+        sequence:
+        - service: light.turn_on
+          metadata: {}
+          data:
+            brightness_step_pct: '{{ -brightness_step_pct }}'
+          target:
+            entity_id: '{{ target_entity_id }}'
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 0
+            milliseconds: !input repeat_delay
+    alias: brightness_move_down
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''brightness_stop'' }}'
+    - condition: template
+      value_template: '{{ target_entity_domain == ''light'' }}'
+    sequence: []
+    alias: brightness_stop
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''arrow_left_click'' }}'
+    sequence:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: '{{ states(selected_target) | int <= 0 }}'
+        sequence:
+        - service: input_number.set_value
+          data_template:
+            entity_id: !input selected_target
+            value: '{{ expand(targets) | list | count | int - 1 }}'
+      default:
+      - service: input_number.decrement
+        entity_id: !input selected_target
+    - variables:
+        target_index: !input selected_target
+        target_entity_id: '{{ expand(targets)[states(selected_target) | int] | attr(''entity_id'')
+          }}'
+        target_entity_domain: '{{ target_entity_id.split(''.'')[0] }}'
+    - sequence:
+      - service: '{{ target_entity_domain }}.turn_{% if states(target_entity_id) ==
+          ''off'' %}on{% else %}off{% endif %}'
+        target:
+          entity_id: '{{ target_entity_id }}'
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: !input blink_time
+      - service: '{{ target_entity_domain }}.turn_{% if states(target_entity_id) ==
+          ''off'' %}on{% else %}off{% endif %}'
+        target:
+          entity_id: '{{ target_entity_id }}'
+    alias: arrow_left_click
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''arrow_left_hold'' }}'
+    sequence: !input arrow_left_hold
+    alias: arrow_left_hold
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''arrow_left_release'' }}'
+    sequence: !input arrow_left_release
+    alias: arrow_left_release
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''arrow_right_click'' }}'
+    sequence:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: '{{ states(selected_target) | int >= expand(targets) | list
+            | count | int - 1 }}'
+        sequence:
+        - service: input_number.set_value
+          entity_id: !input selected_target
+          data:
+            value: 0
+      default:
+      - service: input_number.increment
+        entity_id: !input selected_target
+    - variables:
+        target_index: !input selected_target
+        target_entity_id: '{{ expand(targets)[states(selected_target) | int] | attr(''entity_id'')
+          }}'
+        target_entity_domain: '{{ target_entity_id.split(''.'')[0] }}'
+    - sequence:
+      - service: '{{ target_entity_domain }}.turn_{% if states(target_entity_id) ==
+          ''off'' %}on{% else %}off{% endif %}'
+        target:
+          entity_id: '{{ target_entity_id }}'
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: !input blink_time
+      - service: '{{ target_entity_domain }}.turn_{% if states(target_entity_id) ==
+          ''off'' %}on{% else %}off{% endif %}'
+        target:
+          entity_id: '{{ target_entity_id }}'
+    alias: arrow_right_click
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''arrow_right_hold'' }}'
+    sequence: !input arrow_right_hold
+    alias: arrow_right_hold
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.id == ''arrow_right_release'' }}'
+    sequence: !input arrow_right_release
+    alias: arrow_right_release

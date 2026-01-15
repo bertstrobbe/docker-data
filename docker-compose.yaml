@@ -1,0 +1,53 @@
+services:
+  # 1. Home Assistant Core
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./homeassistant:/config           # MAP: Uw HA configuratie
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    # Gebruik host netwerk modus zodat HA gemakkelijk apparaten kan ontdekken
+    network_mode: host
+    privileged: true # Vereist voor sommige USB-apparaten en rechten
+    devices:
+        - /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_B0AY462S-if00-port0:/dev/ttyUSB_P1
+
+  # 2. Mosquitto MQTT Broker
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    ports:
+      - "1883:1883"                       # Standaard MQTT poort
+      - "9001:9001"                       # MQTT over WebSocket
+    restart: unless-stopped
+
+  # 3. Zigbee2MQTT
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt:latest
+    volumes:
+      - ./zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      # BELANGRIJK: PAS DIT PAD AAN NAAR UW ZIGBEE USB STICK!
+      # Gebruik 'ls -l /dev/serial/by-id' om het juiste pad te vinden (is stabieler)
+      # OPTIONEEL: Als u meer USB-apparaten in HA wilt gebruiken, kunt u ze hier toevoegen.
+      - /dev/serial/by-id/usb-Itead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_V2_022989f20274ef11a5f1e41e313510fd-if00-port0:/dev/ttyACM0  
+    environment:
+      # Vervang de waarden door uw Mosquitto inloggegevens:
+      - MQTT_SERVER=moquitto
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASS=${MQTT_PASS}
+      # Controleer of de poort overeenkomt met uw Zigbee-stick. Typisch is dit '/dev/ttyACM0' of '/dev/ttyUSB0'
+      - ZIGBEE_PORT=/dev/ttyACM0
+      # Verander deze pan-id en channel NIET als u een bestaand netwerk herstelt
+      - ZIGBEE_PAN_ID=6754
+      - ZIGBEE_CHANNEL=11
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

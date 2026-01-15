@@ -1,0 +1,117 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+mqtt:
+  sensor:
+    - name: "Growatt Netspanning"
+      unique_id: "growatt_pvgridvoltage"
+      state_topic: "energy/growatt"
+      unit_of_measurement: "V"
+      value_template: >
+        {% if value_json['values'] is defined and value_json.buffered == "no" %}
+          {{ value_json['values']['pvgridvoltage'] | float(0) / 10 }}
+        {% else %}
+          {{ states(entity_id) | float(0) }}
+        {% endif %}
+      device_class: voltage
+      state_class: measurement
+
+    - name: "Growatt Totaal Opbrengst"
+      unique_id: "growatt_pvenergytotal"
+      state_topic: "energy/growatt"
+      unit_of_measurement: "kWh"
+      value_template: >
+        {% if value_json['values'] is defined and value_json.buffered == "no" %}
+          {{ value_json['values']['pvenergytotal'] | float(0) / 10 }}
+        {% else %}
+          {{ states(entity_id) | float(0) }}
+        {% endif %}
+      device_class: energy
+      state_class: total_increasing
+    - name: "Growatt Opbrengst Vandaag"
+      unique_id: "growatt_pvenergytoday"
+      state_topic: "energy/growatt"
+      unit_of_measurement: "kWh"
+      value_template: >
+        {% if value_json['values'] is defined and value_json.buffered == "no" %}
+          {{ value_json['values']['pvenergytoday'] | float(0) / 10 }}
+        {% else %}
+          {{ states(entity_id) | float(0) }}
+        {% endif %}
+      device_class: energy
+      state_class: total_increasing
+    - name: "Growatt Actueel Vermogen"
+      unique_id: "growatt_pvpowerout"
+      state_topic: "energy/growatt"
+      unit_of_measurement: "W"
+      value_template: >
+        {% if value_json['values'] is defined and value_json.buffered == "no" %}
+          {{ value_json['values']['pvpowerout'] | float(0) / 10 }}
+        {% else %}
+          {{ states(entity_id) | float(0) }}
+        {% endif %}
+      device_class: power
+      state_class: measurement
+template:
+  - sensor:
+      - name: "Zonnepanelen Totaal Gecumuleerd"
+        unique_id: "zonnepanelen_totaal_gecumuleerd"
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing
+        state: >
+          {# Vul hier je oude Growatt eindstand in #}
+          {% set offset = 52787.3 %}
+          
+          {# Haal de huidige stand van de Shelly op #}
+          {% set shelly = states('sensor.shellyproem50_841fe89196a4_energy_meter_0_energie_solar') | float(0) %}
+          
+          {# Tel ze bij elkaar op #}
+          {{ (offset + shelly) | round(2) }}    
+      - name: "ORB sv-dockerhost Score"
+        unique_id: orb_sv_dockerhost_score
+        unit_of_measurement: "%"
+        state: "{{ states('sensor.orb_sv_dockerhost_monitor') | float(0) }}"
+        icon: "mdi:speedometer"
+
+      - name: "ORB sv-dockerhost Upload"
+        unique_id: orb_sv_dockerhost_upload
+        unit_of_measurement: "Mbps"
+        state: "{{ (state_attr('sensor.orb_sv_dockerhost_monitor', 'bandwidth_score').components.upload_bandwidth_kbps.value | float(0) / 1000) | round(2) }}"
+        icon: "mdi:upload"
+
+      - name: "ORB sv-dockerhost Download"
+        unique_id: orb_sv_dockerhost_download
+        unit_of_measurement: "Mbps"
+        state: "{{ (state_attr('sensor.orb_sv_dockerhost_monitor', 'bandwidth_score').components.download_bandwidth_kbps.value | float(0) / 1000) | round(2) }}"
+        icon: "mdi:download"
+
+      - name: "ORB sv-dockerhost Latency"
+        unique_id: orb_sv_dockerhost_latency
+        unit_of_measurement: "ms"
+        state: "{{ (state_attr('sensor.orb_sv_dockerhost_monitor', 'responsiveness_score').components.internet_lag_us.value | float(0) / 1000) | round(1) }}"
+        icon: "mdi:timer-outline"
+      - name: "ORB sv-dockerhost Reliability"
+        unique_id: orb_sv_dockerhost_reliability
+        unit_of_measurement: "%"
+        state: "{{ state_attr('sensor.orb_sv_dockerhost_monitor', 'reliability_score').display | float(0) }}"
+        icon: "mdi:check-network"
+sensor:
+  - platform: rest
+    resource: http://localhost:8123/local/orb/orb_stats.json
+    name: "ORB sv-dockerhost Monitor"
+    scan_interval: 300 # 5 minuten
+    value_template: "{{ value_json.orb_score.display | float(0) }}"
+    json_attributes_path: "$.orb_score.components"
+    json_attributes:
+      - bandwidth_score
+      - responsiveness_score
+      - reliability_score
