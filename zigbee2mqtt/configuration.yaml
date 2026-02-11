@@ -10,8 +10,7 @@ mqtt:
   password: '!secret mqtt_pass'
   server: mqtt://mosquitto:1883
 serial:
-  port: >-
-    /dev/ttyACM0
+  port: /dev/ttyACM0
   adapter: ember
   baudrate: 115200
   rtscts: false
@@ -44,4 +43,4 @@ frontend:
   enabled: true
   port: 8080
   host: 0.0.0.0
-version: 4
+version: 5

@@ -27,7 +27,7 @@
           "host": "Host",
           "token": "Token"
         },
-        "description": "Sie benötigen das 32 Zeichen lange API-Token, siehe https://www.home-assistant.io/integrations/xiaomi_miio#retrieving-the-access-token für weitere Informationen."
+        "description": "Sie benötigen das 32 Zeichen lange API-Token."
       },
       "mi": {
         "data": {
@@ -36,7 +36,7 @@
           "country": "Cloudserver",
           "prefer_cloud": "Bevorzugen Sie eine Cloud-Verbindung"
         },
-        "description": "Melden Sie sich bei der Xiaomi Miio Cloud an, siehe https://www.openhab.org/addons/bindings/miio/#country-servers für den zu verwendenden Cloud-Server."
+        "description": "Melden Sie sich bei der Xiaomi Miio Cloud an."
       },      
       "2fa": {
         "data": {

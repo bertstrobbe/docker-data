@@ -6,9 +6,12 @@ from homeassistant.components.water_heater import STATE_OFF
 from homeassistant.components.water_heater import STATE_PERFORMANCE
 from homeassistant.components.water_heater import WaterHeaterEntity
 from homeassistant.components.water_heater import WaterHeaterEntityFeature
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import callback
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
@@ -17,7 +20,11 @@ from .coordinator import OnectaRuntimeData
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
     """Set up Daikin water tank entities."""
     onecta_data: OnectaRuntimeData = config_entry.runtime_data
     coordinator = onecta_data.coordinator
@@ -86,7 +93,8 @@ class DaikinWaterTank(CoordinatorEntity, WaterHeaterEntity):
     def hotwatertank_data(self):
         # Find the management point for the hot water tank
         hwd = None
-        for management_point in self._device.daikin_data["managementPoints"]:
+        management_points = self._device.daikin_data.get("managementPoints", [])
+        for management_point in management_points:
             if management_point["managementPointType"] == self._management_point_type:
                 hwd = management_point
         return hwd
@@ -169,7 +177,7 @@ class DaikinWaterTank(CoordinatorEntity, WaterHeaterEntity):
         ret = None
         dht = self.domestic_hotwater_temperature
         if dht is not None:
-            ret = float(self.domestic_hotwater_temperature["maxValue"])
+            ret = float(dht["maxValue"])
         _LOGGER.debug(
             "Device '%s' hot water tank maximum temperature '%s'",
             self._device.name,
@@ -195,17 +203,18 @@ class DaikinWaterTank(CoordinatorEntity, WaterHeaterEntity):
                 )
                 return None
 
-        if int(value) != self._attr_target_temperature:
+        int_value = int(value)
+        if int_value != self._attr_target_temperature:
             res = await self._device.patch(
                 self._device.id,
                 self._embedded_id,
                 "temperatureControl",
                 "/operationModes/heating/setpoints/domesticHotWaterTemperature",
-                int(value),
+                int_value,
             )
             # When updating the value to the daikin cloud worked update our local cached version
             if res:
-                self._attr_target_temperature = value
+                self._attr_target_temperature = int_value
                 self.async_write_ha_state()
 
     async def async_set_temperature(self, **kwargs):

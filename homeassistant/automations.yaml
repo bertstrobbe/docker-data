@@ -367,3 +367,25 @@
       message: Gesena vertrokken Sint-Lucas
       title: Gesena vertrokken Sint-Lucas
   mode: single
+- id: '1768991191434'
+  alias: Low reliability
+  description: Verstuurt een notificatie als de reliability onder de 95% zakt.
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.orb_sensor_reliability_score
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    below: 95
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_6
+    data:
+      title: Home Network reliability speed low
+      message: 'De reliability op sv-dockerhost is laag:  {{ states(''sensor.orb_sv_dockerhost_reliability'')
+        }} %.
+
+        '
+  mode: single

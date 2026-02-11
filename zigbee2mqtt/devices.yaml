@@ -28,3 +28,22 @@
   friendly_name: Lichtjes onder trap
 '0x8c65a3fffeceab40':
   friendly_name: Sonoff water leak detection
+'0xc09b9efffe0be306':
+  friendly_name: Vaatwas
+'0x20a716fffe06b112':
+  friendly_name: Wasmachine
+'0x08fd52fffecf2a9b':
+  friendly_name: Microgolfoven
+'0xc02cedfffeb39c15':
+  friendly_name: Screens slaapkamer
+  invert_cover: false
+  cover_position_tilt_disable_report: false
+  moving_time: 36
+'0xc02cedfffed23722':
+  friendly_name: Screens living
+  invert_cover: false
+  cover_position_tilt_disable_report: false
+'0xc02cedfffed2364a':
+  friendly_name: Screens eetkamer
+  invert_cover: false
+  cover_position_tilt_disable_report: false

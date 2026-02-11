@@ -1,0 +1,19 @@
+sluit_voor_poezen:
+  sequence:
+  - action: cover.close_cover
+    metadata: {}
+    target:
+      entity_id: cover.screens_slaapkamer
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 25
+      milliseconds: 0
+  - action: cover.stop_cover
+    metadata: {}
+    target:
+      entity_id: cover.screens_slaapkamer
+    data: {}
+  alias: Sluit voor poezen
+  description: ''

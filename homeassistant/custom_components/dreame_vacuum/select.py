@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from functools import partial
 
 from homeassistant.components.select import (
+    ENTITY_ID_FORMAT,
     SelectEntity,
     SelectEntityDescription,
 )
@@ -17,7 +18,7 @@ from homeassistant.components.select import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity import EntityCategory, async_generate_entity_id
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_platform, entity_registry
@@ -586,7 +587,11 @@ class DreameVacuumSegmentSelectEntity(DreameVacuumEntity, SelectEntity):
 
         super().__init__(coordinator, description)
         self._attr_unique_id = f"{self.device.mac}_room_{segment_id}_{description.key.lower()}"
-        self.entity_id = f"select.{self.device.name.lower()}_room_{segment_id}_{description.key.lower()}"
+        self.entity_id = async_generate_entity_id(
+            ENTITY_ID_FORMAT,
+            f"{self.device.name}_room_{segment_id}_{description.key.lower()}",
+            hass=self.coordinator.hass,
+        )
         self._attr_options = []
         self._attr_current_option = "unavailable"
         if self.segment:
@@ -602,7 +607,7 @@ class DreameVacuumSegmentSelectEntity(DreameVacuumEntity, SelectEntity):
         else:
             name = f"{self.entity_description.key}_room_unavailable"
 
-        self._attr_name = f"{self.device.name} {name.replace('_', ' ').title()}"
+        self._attr_name = name.replace("_", " ").title()
 
         if self.entity_description.icon_fn is not None:
             self._attr_icon = self.entity_description.icon_fn(self.native_value, self.segment)

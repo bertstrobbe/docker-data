@@ -8,7 +8,7 @@ from homeassistant.components import persistent_notification
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, CONF_HOST, CONF_TOKEN, CONF_PASSWORD, CONF_USERNAME, ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryError
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -26,6 +26,7 @@ from .const import (
     CONF_PREFER_CLOUD,
     CONF_MAP_OBJECTS,
     CONF_HIDDEN_MAP_OBJECTS,
+    CONF_ACCOUNT_TYPE,
     CONF_DONATED,
     CONF_VERSION,
     MAP_OBJECTS,
@@ -97,6 +98,9 @@ class DreameVacuumDataUpdateCoordinator(DataUpdateCoordinator[DreameVacuumDevice
         self._has_temporary_map = None
 
         LOGGER.info("Integration loading: %s", entry.data[CONF_NAME])
+                
+        if CONF_ACCOUNT_TYPE in self._entry.data and self._entry.data[CONF_ACCOUNT_TYPE] != "mi":
+            raise ConfigEntryError(f"Account type '{self._entry.data[CONF_ACCOUNT_TYPE]}' is not supported with this version of the integration!")
 
         if entry.options.get(CONF_VERSION) != VERSION:
             options = entry.options.copy()

@@ -9,11 +9,11 @@ from datetime import datetime
 from functools import partial
 from aiohttp import web
 
-from homeassistant.components.camera import Camera, CameraEntityDescription
+from homeassistant.components.camera import Camera, CameraEntityDescription, ENTITY_ID_FORMAT
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, CONTENT_TYPE_MULTIPART
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity import EntityCategory, async_generate_entity_id
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers import entity_registry
 
@@ -178,11 +178,19 @@ class DreameVacuumCameraEntity(DreameVacuumEntity, Camera):
                 self._map_name = None
             self._set_map_name()
             self._attr_unique_id = f"{self.device.mac}_map_{self.map_index}"
-            self.entity_id = f"camera.{self.device.name.lower()}_map_{self.map_index}"
+            self.entity_id = async_generate_entity_id(
+                ENTITY_ID_FORMAT, 
+                f"{self.device.name.lower()}_map_{self.map_index}",
+                hass=self.coordinator.hass,
+            )
         else:
-            self._attr_name = f"{self.device.name} Current {description.name}"
+            self._attr_name = f"Current {description.name}"
             self._attr_unique_id = f"{self.device.mac}_map_{description.key}"
-            self.entity_id = f"camera.{self.device.name.lower()}_{description.key.lower()}"
+            self.entity_id = async_generate_entity_id(
+                ENTITY_ID_FORMAT, 
+                f"{self.device.name.lower()}_{description.key.lower()}",
+                hass=self.coordinator.hass,
+            )
 
         self.update()
 
@@ -192,7 +200,7 @@ class DreameVacuumCameraEntity(DreameVacuumEntity, Camera):
             if self._map_name is None
             else f"{self._map_name.replace('_', ' ').replace('-', ' ').title()}"
         )
-        self._attr_name = f"{self.device.name} Saved Map {name}"
+        self._attr_name = f"Saved Map {name}"
 
     @callback
     def _handle_coordinator_update(self) -> None:
