@@ -15,10 +15,8 @@ BACKUP_PATHS=("/home/bert/docker-data" "/data/dockerdata")
 
 echo "Git commit $SOURCE_DIR naar github..."
 
-cd "$SOURCE_DIR"
-git add .
-git commit -m "Automatische backup op $(date +'%Y-%m-%d %H:%M')"
-git push origin main
+# Run git commands as the original user to use their SSH keys
+sudo -u bert bash -c "cd '$SOURCE_DIR' && git add . && git commit -m 'Automatische backup op $(date +\"%Y-%m-%d %H:%M\")' && git push origin main"
 echo "Start backup van ${BACKUP_PATHS[*]} naar $GDRIVE_REMOTE..."
 
 # 1. Inpakken
@@ -26,8 +24,8 @@ cd /
 tar --exclude='*.log' --exclude='*.db-shm' --exclude='*.db-wal' -czf /tmp/$BACKUP_NAME -C /home/bert docker-data -C / data/dockerdata
 chown "$(id -u bert):$(id -g bert)" /tmp/$BACKUP_NAME
 
-# 3. Uploaden met rclone
-rclone copy /tmp/$BACKUP_NAME $GDRIVE_REMOTE
+# 3. Uploaden met rclone (run as user since rclone config is user-specific)
+sudo -u bert rclone copy /tmp/$BACKUP_NAME $GDRIVE_REMOTE
 rm /tmp/$BACKUP_NAME
 
-rclone delete $GDRIVE_REMOTE --min-age 15d
+sudo -u bert rclone delete $GDRIVE_REMOTE --min-age 15d
