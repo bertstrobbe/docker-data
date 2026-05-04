@@ -4,7 +4,7 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
-      - ./homeassistant:/config           # MAP: Uw HA configuratie
+      - /data/dockerdata/homeassistant:/config           # MAP: Uw HA configuratie
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     # Gebruik host netwerk modus zodat HA gemakkelijk apparaten kan ontdekken
@@ -18,9 +18,9 @@ services:
     container_name: mosquitto
     image: eclipse-mosquitto:2.0
     volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
+      - /data/dockerdata/mosquitto/config:/mosquitto/config
+      - /data/dockerdata/mosquitto/data:/mosquitto/data
+      - /data/dockerdata/mosquitto/log:/mosquitto/log
     ports:
       - "1883:1883"                       # Standaard MQTT poort
       - "9001:9001"                       # MQTT over WebSocket
@@ -31,7 +31,7 @@ services:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt:latest
     volumes:
-      - ./zigbee2mqtt:/app/data
+      - /data/dockerdata/zigbee2mqtt:/app/data
       - /run/udev:/run/udev:ro
     devices:
       # BELANGRIJK: PAS DIT PAD AAN NAAR UW ZIGBEE USB STICK!
@@ -51,3 +51,23 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+  yt-pot-provider:
+    build: ./yt-provider/server  # Docker bouwt nu zelf de image van de bestanden in die map
+    container_name: yt-pot-provider
+    restart: unless-stopped
+    network_mode: host 
+    ports:
+      - "4416:4416"
+    environment:
+      - DEFAULT_CLIENT=web_remix
+      - TZ=Europe/Brussels
+      - PORT=4416
+  music-assistant:
+    image: ghcr.io/music-assistant/server:latest
+    container_name: music-assistant
+    restart: unless-stopped
+    network_mode: host  # CRUCIAAL voor Sonos ontdekking
+    volumes:
+      - /data/dockerdata/musicassistant/data:/data
+    devices:
+      - /dev/snd:/dev/snd # Optioneel, voor lokale audio uitgang    

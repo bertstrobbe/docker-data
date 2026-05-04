@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import voluptuous as vol
 from typing import Final
-import importlib
 
 from .coordinator import DreameVacuumDataUpdateCoordinator
 from .entity import DreameVacuumEntity
 
+from dataclasses import dataclass
 from homeassistant.helpers.importlib import async_import_module
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -106,6 +106,18 @@ SUPPORT_DREAME = (
     | VacuumEntityFeature.MAP
 )
 
+try:
+    from homeassistant.components.vacuum import Segment
+except ImportError:
+    from dataclasses import dataclass
+
+    @dataclass
+    class Segment:
+        id: str
+        name: str
+        group: str | None = None
+
+CLEAN_AREA_ENTITY_FEATURE = getattr(VacuumEntityFeature, "CLEAN_AREA", 0)
 
 STATE_CODE_TO_STATE: Final = {
     DreameVacuumState.UNKNOWN: STATE_IDLE,
@@ -426,6 +438,8 @@ class DreameVacuum(DreameVacuumEntity, StateVacuumEntity):
         super().__init__(coordinator)
 
         self._attr_supported_features = SUPPORT_DREAME
+        if CLEAN_AREA_ENTITY_FEATURE:
+            self._attr_supported_features |= CLEAN_AREA_ENTITY_FEATURE
         self._attr_device_class = DOMAIN
         self._attr_name = (
             f" {coordinator.device.name}"  ## Add whitespace to display entity on top at the device configuration page
@@ -440,7 +454,22 @@ class DreameVacuum(DreameVacuumEntity, StateVacuumEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         self._set_attrs()
+        if CLEAN_AREA_ENTITY_FEATURE:
+            self._check_segments_changed()
         self.async_write_ha_state()
+
+    @callback
+    def _check_segments_changed(self) -> None:
+        """Check if segments have changed and create repair issue."""
+        last_seen = self.last_seen_segments
+        if last_seen is None:
+            return
+
+        current_ids = {seg.id for seg in self._get_segments()}
+        last_seen_ids = {seg.id for seg in last_seen}
+
+        if current_ids != last_seen_ids:
+            self.async_create_segments_issue()
 
     def _set_attrs(self):
         if self.device.status.has_error:
@@ -485,6 +514,49 @@ class DreameVacuum(DreameVacuumEntity, StateVacuumEntity):
         self._vacuum_state = STATE_CODE_TO_STATE.get(self.device.status.state, STATE_IDLE)
         if self._activity_class is None:
             self._attr_state = self._vacuum_state
+
+    def _get_segments(self) -> list:
+        """Get the segments that can be cleaned."""
+        map_data_list = self.device.status.map_data_list
+        if map_data_list is not None:
+            return [
+                Segment(id=f"{map_data.map_index}_{segment_id}", name=segment.name, group=map_data.map_name)
+                for map_data in self.device.status.map_data_list.values()
+                if map_data.segments is not None and map_data.map_index is not None
+                for segment_id, segment in map_data.segments.items()
+            ]
+        return []
+
+    async def async_get_segments(self) -> list:
+        """Get the segments that can be cleaned."""
+        return self._get_segments()
+
+    async def async_clean_segments(self, segment_ids: list[str], **kwargs) -> None:
+        """Perform an area clean.
+
+        Only cleans segments from the currently selected map.
+        """
+        selected_map = self.device.status.selected_map
+        if selected_map is None or selected_map.map_index is None:
+            return
+
+        selected_map_index = selected_map.map_index
+
+        # Parse composite IDs and filter to only segments from the selected map
+        int_segment_ids: list[int] = []
+        for composite_id in segment_ids:
+            map_index_str, segment_id_str = composite_id.split("_", 1)
+            if int(map_index_str) == selected_map_index:
+                int_segment_ids.append(int(segment_id_str))
+
+        if not int_segment_ids:
+            return
+
+        await self._try_command(
+            "Unable to call clean_segment: %s",
+            self.device.clean_segment,
+            int_segment_ids,
+        )
 
     @property
     def status(self) -> str | None:

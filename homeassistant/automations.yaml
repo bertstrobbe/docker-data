@@ -1,5 +1,5 @@
 - id: '1748885801951'
-  alias: Tenways Pixel 6
+  alias: Tenways Pixel 10 Pro
   description: Start Tenways when Garmin Edge 840 connected
   triggers:
   - entity_id: sensor.pixel_6_bluetooth_connection
@@ -9,10 +9,10 @@
     value_template: '{{ "F7:74:9F:A2:A1:66 (Edge 840)" in trigger.to_state.attributes.connected_paired_devices
       }}'
   actions:
-  - device_id: 4079029b164200ccf17e6b82b2e16cd6
+  - device_id: a41dde997c03f8a0e9aafea1fb77a18c
     domain: mobile_app
     type: notify
-    message: Start Tenways?
+    message: Start tenways?
   mode: single
 - id: '1749141145457'
   alias: Garagepoort open
@@ -29,11 +29,10 @@
       seconds: 0
   conditions: []
   actions:
-  - device_id: 4079029b164200ccf17e6b82b2e16cd6
+  - device_id: a41dde997c03f8a0e9aafea1fb77a18c
     domain: mobile_app
     type: notify
     message: Garagepoort staat nog steeds open!
-    title: Garagepoort
   mode: single
 - id: '1749206621749'
   alias: New automation
@@ -47,8 +46,8 @@
       include_easy_notify: enable_easy_okay_notify
       include_persistent_notification: enable_persistent_okay_notification
       notify_device:
-      - 4079029b164200ccf17e6b82b2e16cd6
       - 629e0a9c85705024e6b6efa89b974d9a
+      - a41dde997c03f8a0e9aafea1fb77a18c
       notify_data:
       - sticky
       - high_priority
@@ -169,7 +168,7 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.vaatwas
+      entity_id: switch.lichtjes_onder_trap
   mode: single
 - id: '1765140085204'
   alias: Hal lichten uit
@@ -231,7 +230,7 @@
       seconds: 0
     below: 300
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     data:
       title: Home Network download speed low
       message: 'De downloadsnelheid op sv-dockerhost is laag:  {{ states(''sensor.orb_sv_dockerhost_download'')
@@ -249,7 +248,7 @@
     event: enter
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Yatan aangekomen thuis
@@ -265,7 +264,7 @@
     event: leave
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Yatan vertrokken van huis
@@ -281,7 +280,7 @@
     event: leave
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Yatan vertrokken uit Molenkouter
@@ -297,7 +296,7 @@
     event: enter
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Yatan aangekomen Molenkouter
@@ -313,7 +312,7 @@
     event: leave
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Gesena vertrokken van huis
@@ -329,7 +328,7 @@
     event: enter
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Gesena aangekomen thuis
@@ -345,7 +344,7 @@
     event: enter
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Gesena aangekomen Sint-Lucas
@@ -361,7 +360,7 @@
     event: leave
   conditions: []
   actions:
-  - action: notify.mobile_app_pixel_6
+  - action: notify.mobile_app_pixel_10_pro
     metadata: {}
     data:
       message: Gesena vertrokken Sint-Lucas
@@ -388,4 +387,412 @@
         }} %.
 
         '
+  mode: single
+- id: '1777824697734'
+  alias: 'Klimaat: Screens Master Bedroom Beheer'
+  description: ''
+  triggers:
+  - entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+    trigger: numeric_state
+    for:
+      minutes: 5
+  - entity_id:
+    - sensor.slaapkamer_bert_veerle_temperatuur
+    above: input_number.drempel_temperatuur_airco
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+  - condition: numeric_state
+    entity_id: sensor.slaapkamer_bert_veerle_temperatuur
+    above: input_number.drempel_temperatuur_airco
+  - condition: numeric_state
+    entity_id: cover.screens_slaapkamer
+    attribute: current_position
+    above: 80
+  - condition: numeric_state
+    entity_id: sensor.regenmeter_neerslag
+    below: 0.1
+  actions:
+  - action: cover.set_cover_position
+    target:
+      entity_id:
+      - cover.screens_slaapkamer
+    data:
+      position: '{{ states(''input_number.target_positie_screens_cats'') | int }}'
+  - data:
+      message: Screens Master Bedroom naar {{ states('input_number.target_positie_screens_cats')
+        }}% wegens zon/warmte.
+      title: Screens master bedroom omlaag
+    action: notify.mobile_app_pixel_10_pro
+- id: '1777824882960'
+  alias: 'Klimaat: Sluiten living screens'
+  description: ''
+  triggers:
+  - entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+    trigger: numeric_state
+    for:
+      minutes: 5
+  - entity_id:
+    - sensor.living_temperatuur
+    above: input_number.drempel_temperatuur_living
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+  - condition: numeric_state
+    entity_id: sensor.living_temperatuur
+    above: input_number.drempel_temperatuur_living
+  - condition: numeric_state
+    entity_id: cover.screens_slaapkamer
+    attribute: current_position
+    above: 80
+  - condition: numeric_state
+    entity_id: sensor.regenmeter_neerslag
+    below: 0.1
+  actions:
+  - action: cover.set_cover_position
+    target:
+      entity_id: cover.screens_living
+    data:
+      position: '{{ states(''input_number.target_positie_screens'') | int }}'
+  - data:
+      message: Screens living naar {{ states('input_number.target_positie_screens')
+        }}% wegens zon/warmte.
+      title: Screens master bedroom omlaag
+    action: notify.mobile_app_pixel_10_pro
+  mode: single
+- id: '1777826887803'
+  alias: Automation close screens eetkamer
+  description: ''
+  triggers:
+  - entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+    trigger: numeric_state
+    for:
+      minutes: 5
+  - entity_id:
+    - sensor.living_temperatuur
+    above: input_number.drempel_temperatuur_living
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+  - condition: numeric_state
+    entity_id: sensor.living_temperatuur
+    above: input_number.drempel_temperatuur_living
+  - condition: numeric_state
+    entity_id: cover.screens_slaapkamer
+    attribute: current_position
+    above: 80
+  - condition: numeric_state
+    entity_id: sensor.regenmeter_neerslag
+    below: 0.1
+  actions:
+  - action: cover.set_cover_position
+    target:
+      entity_id: cover.screens_eetkamer
+    data:
+      position: '{{ states(''input_number.target_positie_screens_cats'') | int }}'
+  - data:
+      message: Screens eetkamer naar {{ states('input_number.target_positie_screens_cats')
+        }}% wegens zon/warmte.
+      title: Screens master bedroom omlaag
+    action: notify.mobile_app_pixel_10_pro
+  mode: single
+- id: '1777829859455'
+  alias: Auto airco Slaapkamer (Zon & Temp)
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id: sensor.slaapkamer_bert_veerle_temperatuur
+    above: input_number.drempel_temperatuur_airco
+  - trigger: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+    for:
+      minutes: 5
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.slaapkamer_bert_veerle_temperatuur'') | float
+      > states(''input_number.drempel_temperatuur_airco'') | float }}'
+  - condition: template
+    value_template: '{{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+      | float(0) > states(''input_number.drempel_zonne_energie'') | float(0) }}'
+  - condition: state
+    entity_id: climate.master_bedroom_room
+    state: 'off'
+  actions:
+  - action: climate.set_hvac_mode
+    metadata: {}
+    target:
+      entity_id: climate.master_bedroom_room
+    data:
+      hvac_mode: cool
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Airco geactiveerd
+      message: 'Koeling gestart in master bedroom ({{ states(''sensor.slaapkamer_bert_veerle_temperatuur'')}}
+        °C). Opbrengst is {{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+        }}W. '
+- id: '1777831303100'
+  alias: Auto airco Yatan
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.yatan_temperatuur
+    above: input_number.drempel_temperatuur_airco
+  - trigger: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+    for:
+      minutes: 5
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.yatan_temperatuur'') | float > states(''input_number.drempel_temperatuur_airco'')
+      | float }}'
+  - condition: template
+    value_template: '{{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+      | float(0) > states(''input_number.drempel_zonne_energie'') | float(0) }}'
+  - condition: state
+    entity_id: climate.yatan_room
+    state:
+    - 'off'
+  actions:
+  - action: climate.set_hvac_mode
+    metadata: {}
+    target:
+      entity_id: climate.yatan_room
+    data:
+      hvac_mode: cool
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Airco geactiveerd
+      message: 'Koeling gestart in kamer Yatan ({{ states(''sensor.yatan_temperatuur'')}}
+        °C). Opbrengst is {{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+        }}W. '
+  mode: single
+- id: '1777831401819'
+  alias: Auto airo Gesena
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id: sensor.gesena_temperatuur
+    above: input_number.drempel_temperatuur_airco
+  - trigger: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    above: input_number.drempel_zonne_energie
+    for:
+      minutes: 5
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.gesena_temperatuur'') | float > states(''input_number.drempel_temperatuur_airco'')
+      | float }}'
+  - condition: template
+    value_template: '{{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+      | float(0) > states(''input_number.drempel_zonne_energie'') | float(0) }}'
+  - condition: state
+    entity_id: climate.gesena_room
+    state: 'off'
+  actions:
+  - action: climate.set_hvac_mode
+    metadata: {}
+    target:
+      entity_id: climate.gesena_room
+    data:
+      hvac_mode: cool
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Airco geactiveerd
+      message: 'Koeling gestart in kamer Gesena ({{ states(''sensor.gesena_temperatuur'')}}
+        °C). Opbrengst is {{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+        }}W. '
+  mode: single
+- id: '1777836589364'
+  alias: Screen living omhoog bij regen
+  description: Bescherm de screens tegen neerslag
+  triggers:
+  - entity_id: sensor.regenmeter_neerslag
+    above: 0
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: cover.screens_living
+    attribute: current_position
+    below: 100
+  actions:
+  - action: cover.open_cover
+    target:
+      entity_id: cover.screens_living
+    data: {}
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Screens living omhoog door regen
+      message: Regen gedetecteerd ({{ states('sensor.regenmeter_neerslag') }} mm).
+        Screen living worden omhoog gehaald.
+      tag: regen-alert
+  mode: restart
+- id: '1777836745488'
+  alias: Screens eetkamer omhoog door regen
+  description: Bescherm de screens tegen neerslag
+  triggers:
+  - entity_id: sensor.regenmeter_neerslag
+    above: 0
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: cover.screens_eetkamer
+    attribute: current_position
+    below: 100
+  actions:
+  - action: cover.open_cover
+    target:
+      entity_id: cover.screens_eetkamer
+    data: {}
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Screens eetkamer omhoog door regen
+      message: Regen gedetecteerd ({{ states('sensor.regenmeter_neerslag') }} mm).
+        Screen eetkamer worden omhoog gehaald.
+      tag: regen-alert
+  mode: restart
+- id: '1777836882860'
+  alias: Screens slaapkamer omhoog bij regen
+  description: Bescherm de screens tegen neerslag
+  triggers:
+  - entity_id: sensor.regenmeter_neerslag
+    above: 0
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: cover.screens_slaapkamer
+    attribute: current_position
+    below: 100
+  actions:
+  - action: cover.open_cover
+    target:
+      entity_id: cover.screens_slaapkamer
+    data: {}
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Screens master bedroom omhoog door regen
+      message: Regen gedetecteerd ({{ states('sensor.regenmeter_neerslag') }} mm).
+        Screen master bedroom worden omhoog gehaald.
+      tag: regen-alert
+  mode: restart
+- id: '1777904373468'
+  alias: Auto arico off Yatan
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.yatan_temperatuur
+    below: input_number.drempel_temperatuur_airco
+  - trigger: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    below: input_number.drempel_zonne_energie
+    for:
+      minutes: 30
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.yatan_temperatuur'') | float < states(''input_number.drempel_temperatuur_airco'')
+      | float }}'
+  - condition: template
+    value_template: '{{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+      | float(0) < states(''input_number.drempel_zonne_energie'') | float(0) }}'
+  - condition: state
+    entity_id: climate.yatan_room
+    state:
+    - cool
+  actions:
+  - action: climate.set_hvac_mode
+    metadata: {}
+    target:
+      entity_id: climate.yatan_room
+    data:
+      hvac_mode: 'off'
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Airco gestopt
+      message: 'Koeling gestopt in kamer Yatan ({{ states(''sensor.yatan_temperatuur'')}}
+        °C). Opbrengst is {{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+        }}W. '
+  mode: single
+- id: '1777904462285'
+  alias: Auto airco off Master bedroom
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id: sensor.slaapkamer_bert_veerle_temperatuur
+    below: input_number.drempel_temperatuur_airco
+  - trigger: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    below: input_number.drempel_zonne_energie
+    for:
+      minutes: 30
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.slaapkamer_bert_veerle_temperatuur'') | float
+      < states(''input_number.drempel_temperatuur_airco'') | float }}'
+  - condition: template
+    value_template: '{{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+      | float(0) < states(''input_number.drempel_zonne_energie'') | float(0) }}'
+  - condition: state
+    entity_id: climate.master_bedroom_room
+    state: cool
+  actions:
+  - action: climate.set_hvac_mode
+    metadata: {}
+    target:
+      entity_id: climate.master_bedroom_room
+    data:
+      hvac_mode: 'off'
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Airco gestopt
+      message: 'Koeling gestopt in master bedroom ({{ states(''sensor.slaapkamer_bert_veerle_temperatuur'')}}
+        °C). Opbrengst is {{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+        }}W. '
+  mode: single
+- id: '1777904695442'
+  alias: Auto airco off Gesena
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id: sensor.gesena_temperatuur
+    below: input_number.drempel_temperatuur_airco
+  - trigger: numeric_state
+    entity_id: sensor.shelly_zonne_energie_rechts_a_vermogen
+    below: input_number.drempel_zonne_energie
+    for:
+      minutes: 30
+  conditions:
+  - condition: template
+    value_template: '{{ states(''sensor.gesena_temperatuur'') | float < states(''input_number.drempel_temperatuur_airco'')
+      | float }}'
+  - condition: template
+    value_template: '{{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+      | float(0) < states(''input_number.drempel_zonne_energie'') | float(0) }}'
+  - condition: state
+    entity_id: climate.gesena_room
+    state: cool
+  actions:
+  - action: climate.set_hvac_mode
+    metadata: {}
+    target:
+      entity_id: climate.gesena_room
+    data:
+      hvac_mode: 'off'
+  - action: notify.mobile_app_pixel_10_pro
+    data:
+      title: Airco gestopt
+      message: 'Koeling gestopt in kamer Gesena ({{ states(''sensor.gesena_temperatuur'')}}
+        °C). Opbrengst is {{ states(''sensor.shelly_zonne_energie_rechts_a_vermogen'')
+        }}W. '
   mode: single

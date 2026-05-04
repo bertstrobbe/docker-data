@@ -3,6 +3,7 @@ from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import CONF_STATE_CLASS
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.components.sensor import SensorStateClass
+from homeassistant.components.update import UpdateDeviceClass
 from homeassistant.const import CONCENTRATION_MICROGRAMS_PER_CUBIC_METER
 from homeassistant.const import CONF_DEVICE_CLASS
 from homeassistant.const import CONF_ICON
@@ -56,6 +57,15 @@ TRANSLATION_KEY = "TranslationKey"
 # - ENABLED_DEFAULT: Is the sensor enabled by default or not
 # - TRANSLATION_KEY: Translation key
 VALUE_SENSOR_MAPPING = {
+    "sgtin": {
+        CONF_DEVICE_CLASS: None,
+        CONF_STATE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ICON: "mdi:information-outline",
+        ENABLED_DEFAULT: True,
+        ENTITY_CATEGORY: None,
+        TRANSLATION_KEY: "sgtin",
+    },
     "schedule": {
         CONF_DEVICE_CLASS: None,
         CONF_STATE_CLASS: None,
@@ -622,5 +632,14 @@ VALUE_SENSOR_MAPPING = {
         ENABLED_DEFAULT: True,
         ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         TRANSLATION_KEY: "ratelimitremainingday",
+    },
+    "FirmwareUpdate": {
+        CONF_DEVICE_CLASS: UpdateDeviceClass.FIRMWARE,
+        CONF_STATE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ICON: "mdi:update",
+        ENABLED_DEFAULT: True,
+        ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        TRANSLATION_KEY: "firmwareupdate",
     },
 }

@@ -1030,7 +1030,7 @@ class Segment(Zone):
                 self.name = f"{self.name} {self.index + 1}"
         else:
             self.name = f"Room {self.segment_id}"
-        self.icon = SEGMENT_TYPE_CODE_TO_HA_ICON[self.type]
+        self.icon = SEGMENT_TYPE_CODE_TO_HA_ICON.get(self.type)
 
     def next_type_index(self, type, segments) -> int:
         index = 0

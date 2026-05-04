@@ -1612,6 +1612,7 @@ class DreameMapVacuumMapEditor:
             and self._selected_map_id
             and not map_data.temporary_map
         ):
+            segment_type = int(segment_type)
             if (
                 map_data.segments[segment_id].type != segment_type
                 or map_data.segments[segment_id].custom_name != custom_name
@@ -2191,7 +2192,7 @@ class DreameVacuumMapDecoder:
                                 if segment_info.get("nei_id"):
                                     segments[k].neighbors = segment_info["nei_id"]
                                 if segment_info.get("type"):
-                                    segments[k].type = segment_info["type"]
+                                    segments[k].type = int(segment_info["type"])
                                 if segment_info.get("index"):
                                     segments[k].index = segment_info["index"]
                                 if segment_info.get("roomID"):

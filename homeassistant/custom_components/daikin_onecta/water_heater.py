@@ -28,7 +28,7 @@ async def async_setup_entry(
     """Set up Daikin water tank entities."""
     onecta_data: OnectaRuntimeData = config_entry.runtime_data
     coordinator = onecta_data.coordinator
-    for dev_id, device in onecta_data.devices.items():
+    for device in onecta_data.devices.values():
         supported_management_point_types = {
             "domesticHotWaterTank",
             "domesticHotWaterFlowThrough",
@@ -59,19 +59,18 @@ class DaikinWaterTank(CoordinatorEntity, WaterHeaterEntity):
         self._attr_temperature_unit = UnitOfTemperature.CELSIUS
         self._attr_unique_id = f"{self._device.id}"
         self._management_point_type = management_point_type
-        mpt = management_point_type[0].upper() + management_point_type[1:]
         self._attr_device_info = {
             "identifiers": {(DOMAIN, self._device.id + self._management_point_type)},
-            "name": self._device.name + " " + mpt,
+            "name": self._device.name,
             "via_device": (DOMAIN, self._device.id),
         }
+        self._attr_has_entity_name = True
         self._device.fill_device_info(self._attr_device_info, management_point_type)
         self.update_state()
         if self.supported_features & WaterHeaterEntityFeature.TARGET_TEMPERATURE:
             _LOGGER.debug("Device '%s' tank temperature is settable", device.name)
 
     def update_state(self) -> None:
-        self._attr_name = self._device.name
         self._attr_supported_features = self.get_supported_features()
         self._attr_current_temperature = self.get_current_temperature()
         self._attr_target_temperature = self.get_target_temperature()
@@ -229,13 +228,11 @@ class DaikinWaterTank(CoordinatorEntity, WaterHeaterEntity):
         state = STATE_OFF
         hwtd = self.hotwatertank_data
         onoff = hwtd.get("onOffMode")
-        if onoff is not None:
-            if onoff["value"] == "on":
-                state = STATE_HEAT_PUMP
-                pwf = hwtd.get("powerfulMode")
-                if pwf is not None:
-                    if pwf["value"] == "on":
-                        state = STATE_PERFORMANCE
+        if onoff is not None and onoff["value"] == "on":
+            state = STATE_HEAT_PUMP
+            pwf = hwtd.get("powerfulMode")
+            if pwf is not None and pwf["value"] == "on":
+                state = STATE_PERFORMANCE
         _LOGGER.debug("Device '%s' hot water tank current mode '%s'", self._device.name, state)
         return state
 

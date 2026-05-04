@@ -17,9 +17,11 @@ services:
 
   # Optional: Watchtower automatically updates the Orb image when a new version is released
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
     restart: unless-stopped
+    environment:
+      - DOCKER_API_VERSION=1.40
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Required to monitor other containers
     command: --label-enable --scope orb --cleanup --interval 3600 # Check for updates every hour (3600s)

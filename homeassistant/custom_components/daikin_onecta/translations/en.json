@@ -41,6 +41,11 @@
     }
   },
   "entity": {
+    "update": {
+      "firmwareupdate": {
+        "name": "Firmware update"
+      }
+    },
     "select": {
       "schedule": {
         "name": "Schedule"
@@ -55,6 +60,9 @@
       }
     },
     "sensor": {
+      "sgtin": {
+        "name": "SGTIN"
+      },
       "ratelimitremainingday": {
         "name": "Ratelimit remaining day"
       },
