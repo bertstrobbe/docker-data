@@ -1,5 +1,6 @@
 # Geheimen (Docker & Apps)
 .env
+.portainer_token
 homeassistant/secrets.yaml
 zigbee2mqtt/secret.yaml
 
