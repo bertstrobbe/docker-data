@@ -34,7 +34,7 @@ fi
 echo "Start backup van ${BACKUP_PATHS[*]} naar $GDRIVE_REMOTE..."
 
 # 1. Inpakken
-tar --exclude='*.log' --exclude='*.db-shm' --exclude='*.db-wal' -czf "/tmp/$BACKUP_NAME" -C /home/bert docker-data -C / data/dockerdata
+tar --exclude='*.log' --exclude='*.db-shm' --exclude='*.db-wal' --exclude='*/temp/*' --exclude='*homeassistant/backups/*' -czf "/tmp/$BACKUP_NAME" -C /home/bert docker-data -C / data/dockerdata
 chown "$(id -u bert):$(id -g bert)" "/tmp/$BACKUP_NAME"
 
 # 2. Containers herstarten
