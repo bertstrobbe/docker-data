@@ -27,6 +27,8 @@ This directory (`/home/bert/docker-data`) contains maintenance, safeguard, and b
 - **Dawarich**: PostgreSQL/PostGIS databases are dumped online using `pg_dump`. A separate safeguard script (`dawarich_geocode_guard.sh`) disables the nightly reverse-geocoding job to avoid hitting API rate limits during backfills.
 - **Portainer**: Backed up via its own HTTP API (`POST /api/backup`) using a token stored in `.portainer_token`.
 - **Immich (Photos)**: Backed up using `rclone copy` (not `sync`) to prevent accidental remote deletion. Regeneratable folders (`/thumbs/**`, `/encoded-video/**`) are explicitly excluded.
+- **Orb (Open Resource Benchmark)**: The Home Assistant REST sensor (`sensor.orb_sv_dockerhost_monitor`) reads from `/data/dockerdata/homeassistant/www/orb/orb_stats.json`. This is updated automatically every 5 minutes via a user `bert` cron job running `/app/orb summary` inside the container.
+- **Smarthome Stack Updates (Portainer)**: Re-pulling images on the `smarthome` stack in Portainer fails (Status 500) because `yt-pot-provider:1` is a local-only image and doesn't exist on Docker Hub. To update `homeassistant` (which does not auto-update via Watchtower), run a targeted Watchtower command: `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_API_VERSION=1.40 containrrr/watchtower --run-once homeassistant`.
 
 ## Updates
 - System updates are handled via `update.sh` using standard `apt` commands. Docker container updates are typically done by pulling new images and pruning the old ones.
