@@ -31,4 +31,5 @@ This directory (`/home/bert/docker-data`) contains maintenance, safeguard, and b
 - **Smarthome Stack Updates (Portainer)**: Re-pulling images on the `smarthome` stack in Portainer fails (Status 500) because `yt-pot-provider:1` is a local-only image and doesn't exist on Docker Hub. To update `homeassistant` (which does not auto-update via Watchtower), run a targeted Watchtower command: `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_API_VERSION=1.40 containrrr/watchtower --run-once homeassistant`.
 
 ## Updates
-- System updates are handled via `update.sh` using standard `apt` commands. Docker container updates are typically done by pulling new images and pruning the old ones.
+- System updates are handled via `update.sh` using standard `apt` commands.
+- Detailed container update strategies, Watchtower policies, Portainer procedures, and quirks are documented in [CONTAINER_UPDATES.md](file:///home/bert/docker-data/CONTAINER_UPDATES.md).
